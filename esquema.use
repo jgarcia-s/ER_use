@@ -53,8 +53,8 @@ end
 
 associationclass Configuracion 
 between
-  Supervisor[*] role supervisaA
   Usuario[1..*] role leSupervisa
+  Supervisor[*] role supervisaA
 attributes
   puedeVisualizarTratamiento : Boolean
   puedeVisualizarMedicamentosRestantes : Boolean
@@ -88,7 +88,7 @@ attributes
   dia : Date
 end
 
-class DiaRegistro
+class DiaDeRegistro
 attributes
   fechaRegistro : Date
 end
@@ -164,6 +164,14 @@ attributes
   tiempoRepeticion : Integer
 end
 
+class VisitaMedica
+attributes
+  hora : Hour
+  lugar : String
+  medico : String
+  dia : Date
+end
+
 class AvisoVisitaMedica < Aviso
 attributes
   modoDeAlarma : ModoAlarma
@@ -197,4 +205,74 @@ end
 association Administra between
   Administrador[1..*]
   Anuncio[*]
+end
+
+association seMuestraALosMedicamentosCon between
+  Anuncio[*]
+  Categoria[1..*]
+end
+
+association perteneceALa between
+  Medicamento[*]
+  Categoria[1..*]
+end
+
+association seAdministraDurante between
+  MedicamentoAdministradoAlPaciente[1]
+  Periodo[*]
+end
+
+association del between
+  AvisoAdministracionMedicamento[*]
+  MedicamentoEnTratamiento[1]
+end
+
+association delMedicamento between
+  AvisoMedicacionRestante[*]
+  MedicamentoEnTratamiento[1]
+end
+
+association de between
+  AvisoVisitaMedica[*]
+  VisitaMedica[1]
+end
+
+association porParteDe between
+  AvisoIncumplimiento[*]
+  Paciente[1]
+end
+
+association configuradoPor between
+  AvisoEspecial[*]
+  Paciente[1]
+end
+
+association sufre between
+  Paciente[1]
+  Sintoma[*]
+end
+
+association escribe between
+  Paciente[1]
+  Comentario[*]
+end
+
+association tieneProgramada between
+  Paciente[1]
+  VisitaMedica[*]
+end
+
+association seMide between
+  Paciente[1]
+  DatoFisico[*]
+end
+
+association padece between
+  Paciente[1]
+  Alergia[*]
+end
+
+association seRelacionaCon between
+  Comentario[*]
+  MedicamentoEnTratamiento[0..1]
 end
