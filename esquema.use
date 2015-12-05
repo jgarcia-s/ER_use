@@ -1,0 +1,200 @@
+-- $ProjectHeader: use 0.393 Wed, 16 May 2007 14:10:28 +0200 opti $
+
+model ER
+
+
+-- enumerations
+
+enum TipoRespuestaAviso {Aceptar,Descartar,Posponer}
+enum Composicion {Pastillas,Pomada,Inyeccion,Jarabe,Dosis,Gotas}
+enum DiaSemana {Lunes,Martes,Miercoles,Jueves,Viernes,Sabado,Domingo}
+enum CondicionesEspeciales {Hour,Periodo,Despertar,Comer,Deporte}
+enum AtributoFisico {Temperatura,Presion,Peso}
+enum ModoAlarma {SoloVibracion,SoloSonido,SonidoYVibracion,EnSilencio}
+
+--  aux classes
+class Image
+end
+
+class Banner
+end
+
+class Date
+attributes
+  dia : Integer
+  Mes : Integer
+  Ano : Integer
+end
+
+class Hour
+attributes
+  hour : Integer
+  minute : Integer
+  seconds : Integer
+end 
+
+-- classes
+class Usuario
+attributes
+  nombre : String
+  email : String
+  contrassena : String
+  ultimaActualizacion : Date
+end
+
+class Paciente < Usuario
+end
+
+class Administrador < Usuario
+end
+
+class Supervisor < Usuario
+end
+
+associationclass Configuracion 
+between
+  Supervisor[*] role supervisaA
+  Usuario[1..*] role leSupervisa
+attributes
+  puedeVisualizarTratamiento : Boolean
+  puedeVisualizarMedicamentosRestantes : Boolean
+  puedeVisualizarVisitasMedicas : Boolean
+  puedeVisualizarComentarios : Boolean
+  puedeVisualizarDatosPersonales : Boolean
+end
+
+class Alergia
+attributes
+  nombre : String
+  descripcion : String
+end
+
+class DatoFisico
+attributes
+  tipo : String
+  dato : Real
+end
+
+class Comentario
+attributes
+  texto : String
+  dia : Date
+end
+
+class Sintoma
+attributes
+  nombre : String
+  descripcion : String
+  dia : Date
+end
+
+class DiaRegistro
+attributes
+  fechaRegistro : Date
+end
+
+class Categoria
+attributes
+  nombre : String
+end
+
+class Anuncio
+attributes
+  identificador : Integer
+  nombre : String
+  fotografia : String
+  banner : Banner
+  enlace : String
+end
+
+class Medicamento
+attributes
+  identificador : Integer
+  nombre : String
+  infoProspecto : String
+  fotografia : Image
+  tipoComposicion : Composicion
+end
+
+class MedicamentoAdministradoAlPaciente
+attributes
+  identificador : Integer
+  fotografia : String
+  nombreMedico : String
+  diasAdministracion : DiaSemana
+  horaInicioAdministracion : Hour
+  horaFinAdministracion : Hour
+  cantidadAdministracion : Integer
+  avisoNumeroFallos : Integer
+  avisoCondicionesEspeciales : CondicionesEspeciales
+  introduccionManual : Boolean
+end
+
+class Periodo
+attributes
+  fechaInicio : Date
+  fechaFin : Date
+end
+
+class MedicamentoTratamientoFinalizado < MedicamentoAdministradoAlPaciente
+end
+
+class MedicamentoEnTratamiento < MedicamentoAdministradoAlPaciente
+attributes
+  cantidadRestante : Integer
+end
+
+class Aviso
+attributes
+  identificador : Integer
+  fecha : Date
+  hora : Hour
+  haSidoAceptada : TipoRespuestaAviso
+end
+
+class AvisoAdministracionMedicamento < Aviso
+attributes
+  modoDeAlarma : ModoAlarma
+  tiempoRepeticion : Integer
+end
+
+class AvisoMedicacionRestante < Aviso
+attributes  
+  modoDeAlarma : ModoAlarma
+  tiempoRepeticion : Integer
+end
+
+class AvisoVisitaMedica < Aviso
+attributes
+  modoDeAlarma : ModoAlarma
+  tiempoRepeticion : Integer
+end
+
+class AvisoIncumplimiento < Aviso
+attributes
+  modoDeAlarma : ModoAlarma
+  tiempoRepeticion : Integer
+end
+
+class AvisoEspecial < Aviso
+attributes
+  modoDeAlarma : ModoAlarma
+  tiempoRepeticion : Integer
+end
+
+class PeticionSerSupervisor < Aviso
+attributes
+  haSidoRespondida : Boolean
+end
+
+-- associations
+
+association PeticionDeSupervision between
+  Paciente[*]
+  Usuario[*]
+end
+
+association Administra between
+  Administrador[1..*]
+  Anuncio[*]
+end
