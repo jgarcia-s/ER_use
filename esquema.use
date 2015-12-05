@@ -127,7 +127,7 @@ attributes
   cantidadAdministracion : Integer
   avisoNumeroFallos : Integer
   avisoCondicionesEspeciales : CondicionesEspeciales
-  introduccionManual : Boolean
+  haSidoIntroducidoManualmente : Boolean
 end
 
 class Periodo
@@ -212,7 +212,7 @@ association seMuestraALosMedicamentosCon between
   Categoria[1..*]
 end
 
-association perteneceALa between
+association perteneceA between
   Medicamento[*]
   Categoria[1..*]
 end
