@@ -33,13 +33,17 @@ attributes
   seconds : Integer
 end 
 
--- classes
+-- classes & basic invariants
 class Usuario
 attributes
   nombre : String
   email : String
   contrassena : String
   ultimaActualizacion : Date
+constraints
+  inv UsuarioInv: nombre.isDefined() and email.isDefined() and contrassena.isDefined()
+
+  inv PrimeryKeyUsuario: Usuario.allInstances->isUnique(email) and Usuario.allInstances->isUnique(nombre)
 end
 
 class Paciente < Usuario
@@ -67,18 +71,27 @@ class Alergia
 attributes
   nombre : String
   descripcion : String
+constraints
+  inv AlergiaInv: nombre.isDefined()
+  --inv PrimaryKeyAlergia: com es fa x indicar q es unica una alergia pel pacient i no pel sistema sencer
 end
 
 class DatoFisico
 attributes
   tipo : String
   dato : Real
+  dia : Date
+constraints
+  inv DatoFisicoInv: tipo.isDefined() and dato.isDefined() and dia.isDefined()
+  --inv PrimaryKeyDatoFisico: 
 end
 
 class Comentario
 attributes
   texto : String
   dia : Date
+constraints
+  inv ComentarioInv: texto.isDefined() and dia.isDefined()
 end
 
 class Sintoma
@@ -86,16 +99,24 @@ attributes
   nombre : String
   descripcion : String
   dia : Date
+constraints
+  inv SintomaInv: nombre.isDefined() and dia.isDefined()
 end
 
 class DiaDeRegistro
 attributes
   fechaRegistro : Date
+constraints
+  inv DiaDeRegistroInv: fechaRegistro.isDefined()
+  inv PrimaryKeyDiaDeRegistro: DiaDeRegistro.allInstances()->isUnique(fechaRegistro)
 end
 
 class Categoria
 attributes
   nombre : String
+constraints
+  inv CategoriaInv: nombre.isDefined() 
+  inv PrimaryKeyCategoria: Categoria.allInstances()->isUnique(nombre)
 end
 
 class Anuncio
@@ -105,6 +126,9 @@ attributes
   fotografia : String
   banner : Banner
   enlace : String
+constraints
+  inv AnuncioInv: identificador.isDefined() and nombre.isDefined() and fotografia.isDefined() and banner.isDefined() and enlace.isDefined()
+  inv PrimaryKeyAnuncio: Anuncio.allInstances()->isUnique(identificador)
 end
 
 class Medicamento
@@ -114,34 +138,44 @@ attributes
   infoProspecto : String
   fotografia : Image
   tipoComposicion : Composicion
+constraints
+  inv MedicamentoInv: identificador.isDefined() and nombre.isDefined() and infoProspecto.isDefined() and fotografia.isDefined() and tipoComposicion.isDefined()
+  inv PrimaryKeyMedicamento: Medicamento.allInstances()->isUnique(identificador)
 end
 
 class MedicamentoAdministradoAlPaciente
+-- no l'he pogut fer associativa de la ternaria, ho tinc pendent de preguntar al profe
 attributes
   identificador : Integer
   fotografia : String
   nombreMedico : String
   diasAdministracion : DiaSemana
+  -- Com indicar q es un set?
   horaInicioAdministracion : Hour
   horaFinAdministracion : Hour
   cantidadAdministracion : Integer
   avisoNumeroFallos : Integer
   avisoCondicionesEspeciales : CondicionesEspeciales
   haSidoIntroducidoManualmente : Boolean
+  cantidadRestante : Integer
+constraints
+  inv MedicamentoAdministradoAlPacienteInv: identificador.isDefined() and fotografia.isDefined() and haSidoIntroducidoManualmente.isDefined()
+  inv PrimaryKeyMedicamentoAdministradoAlPaciente: MedicamentoAdministradoAlPaciente.allInstances->isUnique(identificador)
 end
 
 class Periodo
 attributes
   fechaInicio : Date
   fechaFin : Date
+constraints
+  inv PeriodoInv: fechaInicio.isDefined() --datafi?
+  --inv PrimaryKeyPeriodo:
 end
 
 class MedicamentoTratamientoFinalizado < MedicamentoAdministradoAlPaciente
 end
 
 class MedicamentoEnTratamiento < MedicamentoAdministradoAlPaciente
-attributes
-  cantidadRestante : Integer
 end
 
 class Aviso
@@ -150,18 +184,26 @@ attributes
   fecha : Date
   hora : Hour
   haSidoAceptada : TipoRespuestaAviso
+constraints
+  inv AvisoInv: identificador.isDefined() and fecha.isDefined() and hora.isDefined() and haSidoAceptada.isDefined()
+  inv PrimaryKeyAviso: Aviso.allInstances->isUnique(identificador)
+  --volem q sigui unic x tot el sistema o x usuari?
 end
 
 class AvisoAdministracionMedicamento < Aviso
 attributes
   modoDeAlarma : ModoAlarma
   tiempoRepeticion : Integer
+constraints
+  inv AvisoAdministracionMedicamentoInv: modoDeAlarma.isDefined() and tiempoRepeticion.isDefined()
 end
 
 class AvisoMedicacionRestante < Aviso
 attributes  
   modoDeAlarma : ModoAlarma
   tiempoRepeticion : Integer
+constraints
+  inv AvisoMedicacionRestanteInv: modoDeAlarma.isDefined() and tiempoRepeticion.isDefined()
 end
 
 class VisitaMedica
@@ -170,29 +212,40 @@ attributes
   lugar : String
   medico : String
   dia : Date
+constraints
+  inv VisitaMedicaInv: hora.isDefined() and lugar.isDefined() and medico.isDefined() and dia.isDefined()
+  --inv PrimaryKeyVisitaMedica: hauriem de permetre q pugui tenir registrades dos visites a la mateixa hora i dia?
 end
 
 class AvisoVisitaMedica < Aviso
 attributes
   modoDeAlarma : ModoAlarma
   tiempoRepeticion : Integer
+constraints
+  inv AvisoVisitaMedicaInv: modoDeAlarma.isDefined() and tiempoRepeticion.isDefined()
 end
 
 class AvisoIncumplimiento < Aviso
 attributes
   modoDeAlarma : ModoAlarma
   tiempoRepeticion : Integer
+constraints
+  inv AvisoIncumplimientoInv: modoDeAlarma.isDefined() and tiempoRepeticion.isDefined()
 end
 
 class AvisoEspecial < Aviso
 attributes
   modoDeAlarma : ModoAlarma
   tiempoRepeticion : Integer
+constraints
+  inv AvisoEspecialInv: modoDeAlarma.isDefined() and tiempoRepeticion.isDefined()
 end
 
 class PeticionSerSupervisor < Aviso
 attributes
   haSidoRespondida : Boolean
+constraints
+  inv PeticionSerSupervisorInv: haSidoRespondida.isDefined()
 end
 
 -- associations
@@ -276,3 +329,7 @@ association seRelacionaCon between
   Comentario[*]
   MedicamentoEnTratamiento[0..1]
 end
+
+
+
+--invariants
