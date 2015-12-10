@@ -201,17 +201,18 @@ end
 
 class Periodo
 attributes
-  DateInicio : Date
-  DateFin : Date
+  fechaInicio : Date
+  fechaFin : Date
   diasAdministracion : DiaSemana
   --Com indicar q es un set?
   horaInicioAdministracion : Hour
   horaFinAdministracion : Hour
   cantidadAdministracion : Integer
 constraints
-  inv tieneDefinidosSusAtributos: DateInicio.isDefined() and DateFin.isDefined()
-  --inv seIdentificaPor:   
-  --inv horaInicioMayorQueHoraFin : horaInicioAdministracion < horaFinAdministracion 
+  inv tieneDefinidosSusAtributos: fechaInicio.isDefined() and fechaFin.isDefined()
+  --inv seIdentificaPor:
+  inv tienehoraInicioMenorQueHoraFin : self.horaInicioAdministracion < self.horaFinAdministracion
+  inv tieneFechaInicioMenorQueFechaFin : self.fechaInicio < self.fechaFin
 end
 
 class Aviso
