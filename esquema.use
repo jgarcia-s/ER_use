@@ -79,7 +79,6 @@ attributes
   ultimaActualizacion : Date
 constraints
   inv tieneDefinidosSusAtributos: nombre.isDefined() and email.isDefined() and contrassena.isDefined()
-
   inv seIdentificaPor: Usuario.allInstances->isUnique(email) and Usuario.allInstances->isUnique(nombre)
 end
 
@@ -120,7 +119,7 @@ attributes
   dia : Date
 constraints
   inv tieneDefinidosSusAtributos: tipo.isDefined() and dato.isDefined() and dia.isDefined()
-  --inv seIdentificaPor: 
+  inv seIdentificaPor: DatoFisico.allInstances->forAll( self2 | self <> self2 implies (self.tipo <> self2.tipo or self.dia <> self2.dia))
 end
 
 class Comentario
@@ -144,15 +143,15 @@ class DiaDeRegistro
 attributes
   DateRegistro : Date
 constraints
-  inv tieneDefinidosSusAtributos: DateRegistro.isDefined()
-  inv seIdentificaPor: DiaDeRegistro.allInstances()->isUnique(DateRegistro)
+  inv tieneDefinidosSusAtributos: fechaRegistro.isDefined()
+  inv seIdentificaPor: DiaDeRegistro.allInstances()->isUnique(fechaRegistro)
 end
 
 class Categoria
 attributes
   nombre : String
 constraints
-  inv tieneDefinidosSusAtributos: nombre.isDefined() 
+  inv tieneDefinidosSusAtributos: nombre.isDefined()
   inv seIdentificaPor: Categoria.allInstances()->isUnique(nombre)
 end
 
@@ -195,8 +194,7 @@ attributes
   cantidadRestante : Integer
 constraints
   inv tieneDefinidosSusAtributos: identificador.isDefined() and fotografia.isDefined() and haSidoIntroducidoManualmente.isDefined()
-  inv seIdentificaPor: MedicamentoAdministradoAlPaciente.allInstances->isUnique(identificador)
-
+  inv seIdentificaPor: MedicamentoAdministradoAlPaciente.allInstances-> isUnique(identificador)
 end
 
 class Periodo
@@ -251,7 +249,8 @@ attributes
   dia : Date
 constraints
   inv tieneDefinidosSusAtributos: hora.isDefined() and lugar.isDefined() and medico.isDefined() and dia.isDefined()
-  --inv seIdentificaPor: hauriem de permetre q pugui tenir registrades dos visites a la mateixa hora i dia?
+  --inv seIdentificaPor: hauriem de permetre q pugui tenir registrades dos visites a la mateixa hora i dia? 
+  -- Sí, menos problemas para nosotros.
 end
 
 class AvisoVisitaMedica < Aviso
